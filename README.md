@@ -53,4 +53,4 @@ If you would like to run any of the notebooks to test the model I would recomend
 
 ## Model Zoo
 
-This can be found at this Google Drive [folder](https://drive.google.com/open?id=1hvt2bphAh9wKFRd0JFWU7pkf1yPee4RR). **Note** that if not all of them are there that is due to the folder containg around 200GB of data therefore if you are going to download the models I would recomend downloading one at a time or only the ones you need.
+This can be found at this Google Drive [folder](https://drive.google.com/open?id=1uVCcyAd14qpobmI_5aGULWRmK_XckWq8). **Note** that if not all of them are there that is due to the folder containg around 200GB of data therefore if you are going to download the models I would recomend downloading one at a time or only the ones you need.
