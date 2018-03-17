@@ -15,4 +15,5 @@ sudo add-apt-repository \
 sudo apt-get -y update
 sudo apt-get -y install docker-ce=17.12.0~ce-0~ubuntu
 sudo docker pull unititled99/corenlp
-sudo docker run -p 9000:9000 --rm unititled99/corenlp
+sudo docker run -p 9000:9000 --rm unititled99/corenlp &
+disown
