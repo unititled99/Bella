@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>evaluation module &mdash; Bella 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Bella 1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Bella
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">evaluation module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bella</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>evaluation module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/evaluation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-evaluation">
+<span id="evaluation-module"></span><h1>evaluation module<a class="headerlink" href="#module-evaluation" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="evaluation.combine_results">
+<code class="descclassname">evaluation.</code><code class="descname">combine_results</code><span class="sig-paren">(</span><em>dataset_name</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/evaluation.html#combine_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.combine_results" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset_name</strong> – Name of the dataset e.g. SemEval 14 Laptops. NOTE     has to related to the dataset name in the saved results as it uses the     get_results method.</li>
+<li><strong>*args</strong> – <p>All the file paths to the stored results files of all the     results you would like to compare</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">All of the results concatenated</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="evaluation.evaluation_results">
+<code class="descclassname">evaluation.</code><code class="descname">evaluation_results</code><span class="sig-paren">(</span><em>y_pred</em>, <em>test</em>, <em>dataset_name</em>, <em>file_name=None</em>, <em>save_raw_data=False</em>, <em>re_write=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/evaluation.html#evaluation_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.evaluation_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>param y_pred: List of predicted scores for the test dataset in the <cite>test</cite>     param.
+:param test: TargetCollection of the test data
+:param dataset_name: Name of the test dataset. Does not have to be the real     name just something meaningful
+:param file_name: File path to store the results e.g. accuracy, F1 etc score     results. Full paths required.
+:save_raw_data: Wether to save the raw results as in the predicted sentiment     score per test instance.
+:type y_pred: list
+:type test: TargetCollection
+:type dataset_name: String
+:type file_name: String Optional Default None
+:type save_raw_data: bool Optional Default False
+:returns: Results dataframe where the dataframe contains results statistics     from the scores function which includes Accuracy, F1 3-way, F1 2-way, and     recall all F1 and recall are macro values. These statistics are done on the     whole test data as well on subsets which are per distinct sentiment values     per target text.
+:rtype: pandas.DataFrame</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="evaluation.get_raw_data">
+<code class="descclassname">evaluation.</code><code class="descname">get_raw_data</code><span class="sig-paren">(</span><em>file_path</em>, <em>dataset_name</em>, <em>test_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/evaluation.html#get_raw_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.get_raw_data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> (<em>String</em>) – File path to the results file     e.g. /home/user/results/tdlstm.tsv</li>
+<li><strong>dataset_name</strong> (<em>String</em>) – Name of the dataset e.g. SemEval 14 Laptops</li>
+<li><strong>test_data</strong> (<em>TargetCollection</em>) – The dataset loaded into a TargetCollection</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A TargetCollection of the test_data but with the predicted values     set in the TargetCollection which comes from the raw data.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">TargetCollection</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="evaluation.get_results">
+<code class="descclassname">evaluation.</code><code class="descname">get_results</code><span class="sig-paren">(</span><em>file_name</em>, <em>dataset_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/evaluation.html#get_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.get_results" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_name</strong> (<em>String</em>) – File path to the results file     e.g. /home/user/results/tdlstm.tsv</li>
+<li><strong>dataset_name</strong> (<em>String</em>) – Name of the dataset e.g. SemEval 14 Laptops</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The results data as a Pandas DataFrame</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="evaluation.save_results">
+<code class="descclassname">evaluation.</code><code class="descname">save_results</code><span class="sig-paren">(</span><em>file_path</em>, <em>results_dataframe</em>, <em>dataset_name</em>, <em>test_ids=None</em>, <em>y_pred=None</em>, <em>save_raw_data=False</em>, <em>re_write=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/evaluation.html#save_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.save_results" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> (<em>String</em>) – File path to the results file     e.g. /home/user/results/tdlstm.tsv</li>
+<li><strong>results_dataframe</strong> (<em>pandas.DataFrame</em>) – results to save to the file_path</li>
+<li><strong>dataset_name</strong> (<em>String</em>) – Name of the dataset e.g. SemEval 14 Laptops</li>
+<li><strong>test_ids</strong> (<em>list. Default None</em>) – ids of the test data that are associated to the y_preds</li>
+<li><strong>y_pred</strong> (<em>list. Default None</em>) – predicted labels</li>
+<li><strong>save_raw_data</strong> (<em>bool. Default False</em>) – Wether to save the data as raw which is the test ids     and associated predicted labels</li>
+<li><strong>re_write</strong> (<em>bool. Default False</em>) – If to re-write the data saved to the file name and raw data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Nothing but saves the results data to the file name and if the     test_ids, y_pred and save_raw_data is True will save the predicted labels     and associated ids to json file which then can be retrieved as a     TargetCollection values using get_raw_data method.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="evaluation.scores">
+<code class="descclassname">evaluation.</code><code class="descname">scores</code><span class="sig-paren">(</span><em>y_true</em>, <em>y_pred</em>, <em>num_classes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/evaluation.html#scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#evaluation.scores" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y_true</strong> (<em>list</em>) – Correct labels</li>
+<li><strong>y_pred</strong> (<em>list</em>) – Predicted labels</li>
+<li><strong>num_classes</strong> (<em>int</em>) – Number of classes in the labels e.g. 2 for binary</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns; A list of the following scores in this order:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ol class="first arabic simple">
+<li>Accuracy,     2. 3-way Macro F1, 3. 2-way Macro F1 and 4. Macro recall</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Unititled.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+lexicons module
+===============
+
+.. automodule:: lexicons
+    :members:
+    :undoc-members:
+    :show-inheritance:

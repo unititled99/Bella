@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neural_pooling module &mdash; Bella 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Bella 1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Bella
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">neural_pooling module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bella</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>neural_pooling module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/neural_pooling.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-neural_pooling">
+<span id="neural-pooling-module"></span><h1>neural_pooling module<a class="headerlink" href="#module-neural_pooling" title="Permalink to this headline">¶</a></h1>
+<p>Contains the following neural pooling functions:</p>
+<ol class="arabic simple">
+<li>min</li>
+<li>max</li>
+<li>avg</li>
+</ol>
+<p>Which are from
+<a class="reference external" href="https://aclanthology.coli.uni-saarland.de/papers/P14-1146/p14-1146">Tang et al</a>.</p>
+<p>and the following pooling functions:</p>
+<ol class="arabic simple" start="4">
+<li>prod</li>
+<li>std</li>
+</ol>
+<p>Which are from
+<a class="reference external" href="https://www.ijcai.org/Proceedings/15/Papers/194.pdf">Vo and Zhang</a>.</p>
+<p>and finally the following pooling function:</p>
+<ol class="arabic simple" start="6">
+<li>median</li>
+</ol>
+<p>From <a class="reference external" href="https://aclanthology.coli.uni-saarland.de/papers/E17-1046/e17-1046">Bo Wang et al.</a></p>
+<p>All the functions are applied over the columns and not the rows e.g. matrix
+of (m, n) size and apply mean it will return a vector of (1, n). Therefore by
+default all of the vectors returned are row vectors but if transpose is True
+then column vectors are returned.</p>
+<dl class="function">
+<dt id="neural_pooling.inf_nan_check">
+<code class="descclassname">neural_pooling.</code><code class="descname">inf_nan_check</code><span class="sig-paren">(</span><em>neural_func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#inf_nan_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.inf_nan_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains decorator function that converts any inf or NAN value to a real
+number to avoid any potential problems with inf and NAN’s latter on in the
+processing chain.</p>
+<p>Inf conversion - Converts it to the max (min) value of the numpy array/matrix
+dtype based on it being positive (negative) value.</p>
+<p>NAN conversion - based on the following
+<a class="reference external" href="https://stackoverflow.com/questions/25506281/what-are-all-the-possible-calculations-that-could-cause-a-nan-in-python">post</a> about how NAN’s occur.
+It converts NAN’s to zeros as the majority of the operation should equal
+zero or are close to zero. This is a rough approximation but it should not
+affect that many numbers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_avg">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_avg</code><span class="sig-paren">(</span><em>matrix</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_avg" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<em>np.ndarray</em>) – matrix or vector</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Can keywords that are accepted by <cite>matrix_checking</cite> function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The mean column values in the matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_checking">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_checking</code><span class="sig-paren">(</span><em>neural_func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_checking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_checking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains decorator function to check argument compbatbility and the
+decorated functions return. The functions decorated are the neural functions
+which are:</p>
+<ol class="arabic simple">
+<li><code class="xref py py-func docutils literal"><span class="pre">bella.neural_pooling.matrix_min()</span></code></li>
+<li><code class="xref py py-func docutils literal"><span class="pre">bella.neural_pooling.matrix_max()</span></code></li>
+<li><code class="xref py py-func docutils literal"><span class="pre">bella.neural_pooling.matrix_avg()</span></code></li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_max">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_max</code><span class="sig-paren">(</span><em>matrix</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_max" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<em>np.ndarray</em>) – matrix or vector</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Can keywords that are accepted by <cite>matrix_checking</cite> function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The maximum column values in the matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_median">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_median</code><span class="sig-paren">(</span><em>matrix</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_median"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_median" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<em>np.ndarray</em>) – matrix or vector</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Can keywords that are accepted by <cite>matrix_checking</cite> function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The median column values in the matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_min">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_min</code><span class="sig-paren">(</span><em>matrix</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_min" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<em>np.ndarray</em>) – matrix or vector</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Can keywords that are accepted by <cite>matrix_checking</cite> function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The minimum column values in the matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_prod">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_prod</code><span class="sig-paren">(</span><em>matrix</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_prod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_prod" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<em>np.ndarray</em>) – matrix or vector</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Can keywords that are accepted by <cite>matrix_checking</cite> function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The product of the column values in the matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neural_pooling.matrix_std">
+<code class="descclassname">neural_pooling.</code><code class="descname">matrix_std</code><span class="sig-paren">(</span><em>matrix</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/neural_pooling.html#matrix_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neural_pooling.matrix_std" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>matrix</strong> (<em>np.ndarray</em>) – matrix or vector</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – Can keywords that are accepted by <cite>matrix_checking</cite> function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The standard deviation of the column values in the matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Unititled.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

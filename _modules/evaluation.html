@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>evaluation &mdash; Bella 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Bella 1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Bella
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bella</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>evaluation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for evaluation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">f1_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">accuracy_score</span>
+
+<span class="c1">###</span>
+<span class="c1">## ALL OF THIS NEEDS TESTING</span>
+<span class="c1">###</span>
+<span class="c1">###</span>
+<span class="c1">## This can be re-factored so that only the raw data is stored as the the</span>
+<span class="c1">## scores such as F1 coming from it can be inferred from the raw data easily.</span>
+<span class="c1">###</span>
+
+<span class="k">def</span> <span class="nf">_raw_data_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Given a file name to the results TSV file storing the dataset scores</span>
+<span class="sd">    and the dataset name returns a file path which will store the raw results</span>
+
+<span class="sd">    :param file_path: Path to a results file e.g. /home/user/results/tdlstm.tsv</span>
+<span class="sd">    :param dataset_name: Name of the dataset e.g. SemEval 14 Laptops.</span>
+<span class="sd">    :type file_path: String</span>
+<span class="sd">    :type dataset_name: String</span>
+<span class="sd">    :returns: The file path to the raw data \</span>
+<span class="sd">    e.g. /home/user/results/tdlstm_raw_data/dataset_name.json</span>
+<span class="sd">    :rtype: String</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Create raw data directory</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">raw_data_dir</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_raw_data&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+    <span class="n">raw_data_dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="n">raw_data_dir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">raw_data_dir_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Raw file path</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">raw_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">raw_data_dir_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">raw_file_path</span>
+
+<div class="viewcode-block" id="get_raw_data"><a class="viewcode-back" href="../source/evaluation.html#evaluation.get_raw_data">[docs]</a><span class="k">def</span> <span class="nf">get_raw_data</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">test_data</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param file_path: File path to the results file \</span>
+<span class="sd">    e.g. /home/user/results/tdlstm.tsv</span>
+<span class="sd">    :param dataset_name: Name of the dataset e.g. SemEval 14 Laptops</span>
+<span class="sd">    :param test_data: The dataset loaded into a TargetCollection</span>
+<span class="sd">    :type file_path: String</span>
+<span class="sd">    :type dataset_name: String</span>
+<span class="sd">    :type test_data: TargetCollection</span>
+<span class="sd">    :returns: A TargetCollection of the test_data but with the predicted values \</span>
+<span class="sd">    set in the TargetCollection which comes from the raw data.</span>
+<span class="sd">    :rtype: TargetCollection</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">raw_file_path</span> <span class="o">=</span> <span class="n">_raw_data_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">raw_file_path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">raw_file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">raw_file</span><span class="p">:</span>
+            <span class="n">id_pred_sent</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">raw_file</span><span class="p">)</span>
+            <span class="n">test_ids</span> <span class="o">=</span> <span class="n">id_pred_sent</span><span class="p">[</span><span class="s1">&#39;test_id&#39;</span><span class="p">]</span>
+            <span class="n">predicted_sentiment</span> <span class="o">=</span> <span class="n">id_pred_sent</span><span class="p">[</span><span class="s1">&#39;y_pred&#39;</span><span class="p">]</span>
+            <span class="n">ids_sent</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">test_ids</span><span class="p">,</span> <span class="n">predicted_sentiment</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_sent</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_data</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of predicted sentiments stored </span><span class="si">{}</span><span class="s1"> &#39;</span>\
+                                 <span class="s1">&#39;is not the same as the number of Targets in &#39;</span>\
+                                 <span class="s1">&#39;the test data given </span><span class="si">{}</span><span class="s1">&#39;</span>\
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">id_pred_sent</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_data</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">test_id</span><span class="p">,</span> <span class="n">predicted_sentiment</span> <span class="ow">in</span> <span class="n">ids_sent</span><span class="p">:</span>
+                <span class="n">test_data</span><span class="p">[</span><span class="n">test_id</span><span class="p">][</span><span class="s1">&#39;predicted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">predicted_sentiment</span>
+            <span class="k">return</span> <span class="n">test_data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Raw file </span><span class="si">{}</span><span class="s1"> does not exist for dataset </span><span class="si">{}</span><span class="s1">&#39;</span>\
+        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw_file_path</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">))</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="save_results"><a class="viewcode-back" href="../source/evaluation.html#evaluation.save_results">[docs]</a><span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">results_dataframe</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">test_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">y_pred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_raw_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">re_write</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param file_path: File path to the results file \</span>
+<span class="sd">    e.g. /home/user/results/tdlstm.tsv</span>
+<span class="sd">    :param results_dataframe: results to save to the file_path</span>
+<span class="sd">    :param dataset_name: Name of the dataset e.g. SemEval 14 Laptops</span>
+<span class="sd">    :param test_ids: ids of the test data that are associated to the y_preds</span>
+<span class="sd">    :param y_pred: predicted labels</span>
+<span class="sd">    :param save_raw_data: Wether to save the data as raw which is the test ids \</span>
+<span class="sd">    and associated predicted labels</span>
+<span class="sd">    :param re_write: If to re-write the data saved to the file name and raw data</span>
+<span class="sd">    :type file_path: String</span>
+<span class="sd">    :type results_dataframe: pandas.DataFrame</span>
+<span class="sd">    :type dataset_name: String</span>
+<span class="sd">    :type test_ids: list. Default None</span>
+<span class="sd">    :type y_pred: list. Default None</span>
+<span class="sd">    :type save_raw_data: bool. Default False</span>
+<span class="sd">    :type re_write: bool. Default False</span>
+<span class="sd">    :returns: Nothing but saves the results data to the file name and if the \</span>
+<span class="sd">    test_ids, y_pred and save_raw_data is True will save the predicted labels \</span>
+<span class="sd">    and associated ids to json file which then can be retrieved as a \</span>
+<span class="sd">    TargetCollection values using get_raw_data method.</span>
+<span class="sd">    :rtype: None</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result_file</span><span class="p">:</span>
+            <span class="n">previous_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">result_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">results_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">previous_results</span><span class="p">,</span> <span class="n">results_dataframe</span><span class="p">])</span>
+    <span class="c1"># Ensure the results directgory exists</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">results_exist</span> <span class="o">=</span> <span class="n">get_results</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">results_exist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">re_write</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Re-writing over previous results&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result_file</span><span class="p">:</span>
+                <span class="n">results_dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">result_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not saving results as we do not have permission to &#39;</span>\
+                  <span class="s1">&#39;re-write results&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result_file</span><span class="p">:</span>
+            <span class="n">results_dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">result_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+
+    <span class="k">if</span> <span class="n">save_raw_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">test_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">y_pred</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dataset_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;y_pred, test_ids, and dataset_name parameters have &#39;</span>\
+                             <span class="s1">&#39;to be set if you would like to save the raw data&#39;</span><span class="p">)</span>
+        <span class="n">raw_file_path</span> <span class="o">=</span> <span class="n">_raw_data_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">raw_file_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">re_write</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Re-writing over previous RAW results&#39;</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">raw_file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">raw_file</span><span class="p">:</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s1">&#39;test_id&#39;</span> <span class="p">:</span> <span class="n">test_ids</span><span class="p">,</span> <span class="s1">&#39;y_pred&#39;</span> <span class="p">:</span> <span class="n">y_pred</span><span class="p">},</span>
+                              <span class="n">raw_file</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not saving RAW results as we do not have permission to &#39;</span>\
+                      <span class="s1">&#39;re-write results&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">raw_file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">raw_file</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s1">&#39;test_id&#39;</span> <span class="p">:</span> <span class="n">test_ids</span><span class="p">,</span> <span class="s1">&#39;y_pred&#39;</span> <span class="p">:</span> <span class="n">y_pred</span><span class="p">},</span> <span class="n">raw_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_results"><a class="viewcode-back" href="../source/evaluation.html#evaluation.get_results">[docs]</a><span class="k">def</span> <span class="nf">get_results</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param file_name: File path to the results file \</span>
+<span class="sd">    e.g. /home/user/results/tdlstm.tsv</span>
+<span class="sd">    :param dataset_name: Name of the dataset e.g. SemEval 14 Laptops</span>
+<span class="sd">    :type file_name: String</span>
+<span class="sd">    :type dataset_name: String</span>
+<span class="sd">    :returns: The results data as a Pandas DataFrame</span>
+<span class="sd">    :rtype: pandas.DataFrame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="n">results_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">results_dataframe</span> <span class="o">=</span> <span class="n">results_dataframe</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;dataset&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">results_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="c1">#import code</span>
+            <span class="c1">#code.interact(local=locals())</span>
+            <span class="n">dataset_results</span> <span class="o">=</span> <span class="n">results_dataframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span>
+            <span class="n">method_name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span>
+            <span class="c1">#dataset_results.columns = [method_name]</span>
+            <span class="k">return</span> <span class="n">dataset_results</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="scores"><a class="viewcode-back" href="../source/evaluation.html#evaluation.scores">[docs]</a><span class="k">def</span> <span class="nf">scores</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param y_true: Correct labels</span>
+<span class="sd">    :param y_pred: Predicted labels</span>
+<span class="sd">    :param num_classes: Number of classes in the labels e.g. 2 for binary</span>
+<span class="sd">    :type y_true: list</span>
+<span class="sd">    :type y_pred: list</span>
+<span class="sd">    :type num_classes: int</span>
+<span class="sd">    :returns; A list of the following scores in this order: 1. Accuracy, \</span>
+<span class="sd">    2. 3-way Macro F1, 3. 2-way Macro F1 and 4. Macro recall</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">norm_score</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">score</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">score</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">norm_score</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+    <span class="n">f1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">f1_2way</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">f1_2way</span> <span class="o">=</span> <span class="n">norm_score</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">num_classes</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">norm_score</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">))</span>
+        <span class="n">f1_2way</span> <span class="o">=</span> <span class="n">norm_score</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">,</span>
+                                      <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="n">macro_recall</span> <span class="o">=</span> <span class="n">norm_score</span><span class="p">(</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">acc</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f1_2way</span><span class="p">,</span> <span class="n">macro_recall</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="combine_results"><a class="viewcode-back" href="../source/evaluation.html#evaluation.combine_results">[docs]</a><span class="k">def</span> <span class="nf">combine_results</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param dataset_name: Name of the dataset e.g. SemEval 14 Laptops. NOTE \</span>
+<span class="sd">    has to related to the dataset name in the saved results as it uses the \</span>
+<span class="sd">    get_results method.</span>
+<span class="sd">    :param *args: All the file paths to the stored results files of all the \</span>
+<span class="sd">    results you would like to compare</span>
+<span class="sd">    :returns: All of the results concatenated</span>
+<span class="sd">    :rtype: pandas.DataFrame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_results</span><span class="p">(</span><span class="n">result_file</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">result_file</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="evaluation_results"><a class="viewcode-back" href="../source/evaluation.html#evaluation.evaluation_results">[docs]</a><span class="k">def</span> <span class="nf">evaluation_results</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">save_raw_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">re_write</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    param y_pred: List of predicted scores for the test dataset in the `test` \</span>
+<span class="sd">    param.</span>
+<span class="sd">    :param test: TargetCollection of the test data</span>
+<span class="sd">    :param dataset_name: Name of the test dataset. Does not have to be the real \</span>
+<span class="sd">    name just something meaningful</span>
+<span class="sd">    :param file_name: File path to store the results e.g. accuracy, F1 etc score \</span>
+<span class="sd">    results. Full paths required.</span>
+<span class="sd">    :save_raw_data: Wether to save the raw results as in the predicted sentiment \</span>
+<span class="sd">    score per test instance.</span>
+<span class="sd">    :type y_pred: list</span>
+<span class="sd">    :type test: TargetCollection</span>
+<span class="sd">    :type dataset_name: String</span>
+<span class="sd">    :type file_name: String Optional Default None</span>
+<span class="sd">    :type save_raw_data: bool Optional Default False</span>
+<span class="sd">    :returns: Results dataframe where the dataframe contains results statistics \</span>
+<span class="sd">    from the scores function which includes Accuracy, F1 3-way, F1 2-way, and \</span>
+<span class="sd">    recall all F1 and recall are macro values. These statistics are done on the \</span>
+<span class="sd">    whole test data as well on subsets which are per distinct sentiment values \</span>
+<span class="sd">    per target text.</span>
+<span class="sd">    :rtype: pandas.DataFrame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Check if the data already exists</span>
+    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">re_write</span><span class="p">:</span>
+        <span class="c1"># Check if the results have been saved previously</span>
+        <span class="n">results_df</span> <span class="o">=</span> <span class="n">get_results</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">results_df</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">results_df</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">sentiment_data</span><span class="p">()</span>
+    <span class="n">test</span><span class="o">.</span><span class="n">add_pred_sentiment</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">stored_sentiments</span><span class="p">())</span>
+    <span class="n">test_scores</span> <span class="o">=</span> <span class="n">scores</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+    <span class="n">results_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;3 Class Macro F1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;2 Class F1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_scores</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;Macro Recall&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_scores</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="c1"># Split the test set into sentences that contain i unique sentiments</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="n">all_test_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">num_classes</span><span class="p">:</span>
+            <span class="n">all_test_scores</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sub_test_collection</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">subset_by_sentiment</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_test_collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">all_test_scores</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sub_y_true</span> <span class="o">=</span> <span class="n">sub_test_collection</span><span class="o">.</span><span class="n">sentiment_data</span><span class="p">()</span>
+                <span class="n">sub_y_pred</span> <span class="o">=</span> <span class="n">sub_test_collection</span><span class="o">.</span>\
+                             <span class="n">sentiment_data</span><span class="p">(</span><span class="n">sentiment_field</span><span class="o">=</span><span class="s1">&#39;predicted&#39;</span><span class="p">)</span>
+                <span class="n">subset_num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_test_collection</span><span class="o">.</span><span class="n">stored_sentiments</span><span class="p">())</span>
+                <span class="n">all_test_scores</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">scores</span><span class="p">(</span><span class="n">sub_y_true</span><span class="p">,</span> <span class="n">sub_y_pred</span><span class="p">,</span>
+                                              <span class="n">subset_num_classes</span><span class="p">))</span>
+
+        <span class="n">acc_text</span> <span class="o">=</span> <span class="s1">&#39;Accuracy for text with </span><span class="si">{}</span><span class="s1"> distinct sentiments&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">f1_3_text</span> <span class="o">=</span> <span class="s1">&#39;3 Class Macro F1 for text with </span><span class="si">{}</span><span class="s1"> distinct sentiments&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">f1_2_text</span> <span class="o">=</span> <span class="s1">&#39;2 Class Macro F1 for text with </span><span class="si">{}</span><span class="s1"> distinct sentiments&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">recall_text</span> <span class="o">=</span> <span class="s1">&#39;Macro Recall for text with </span><span class="si">{}</span><span class="s1"> distinct sentiments&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">results_dict</span><span class="p">[</span><span class="n">acc_text</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_test_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">results_dict</span><span class="p">[</span><span class="n">f1_3_text</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_test_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">results_dict</span><span class="p">[</span><span class="n">f1_2_text</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_test_scores</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">results_dict</span><span class="p">[</span><span class="n">recall_text</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_test_scores</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_name</span>
+    <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Whether to save the raw data or not</span>
+        <span class="k">if</span> <span class="n">save_raw_data</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;saving raw data&#39;</span><span class="p">)</span>
+            <span class="n">test_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">save_results</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">results_df</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">test_ids</span><span class="o">=</span><span class="n">test_ids</span><span class="p">,</span>
+                         <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">save_raw_data</span><span class="o">=</span><span class="n">save_raw_data</span><span class="p">,</span>
+                         <span class="n">re_write</span><span class="o">=</span><span class="n">re_write</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">save_results</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">results_df</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">re_write</span><span class="o">=</span><span class="n">re_write</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results_df</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Unititled.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

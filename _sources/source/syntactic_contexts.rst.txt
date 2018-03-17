@@ -1,0 +1,7 @@
+syntactic\_contexts module
+==========================
+
+.. automodule:: syntactic_contexts
+    :members:
+    :undoc-members:
+    :show-inheritance:

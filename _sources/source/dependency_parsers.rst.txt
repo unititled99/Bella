@@ -1,0 +1,7 @@
+dependency\_parsers module
+==========================
+
+.. automodule:: dependency_parsers
+    :members:
+    :undoc-members:
+    :show-inheritance:

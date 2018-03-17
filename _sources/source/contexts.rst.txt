@@ -1,0 +1,7 @@
+contexts module
+===============
+
+.. automodule:: contexts
+    :members:
+    :undoc-members:
+    :show-inheritance:

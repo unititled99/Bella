@@ -1,0 +1,7 @@
+dependency\_tokens module
+=========================
+
+.. automodule:: dependency_tokens
+    :members:
+    :undoc-members:
+    :show-inheritance:

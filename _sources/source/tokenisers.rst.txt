@@ -1,0 +1,7 @@
+tokenisers module
+=================
+
+.. automodule:: tokenisers
+    :members:
+    :undoc-members:
+    :show-inheritance:

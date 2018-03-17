@@ -1,0 +1,7 @@
+word\_vectors module
+====================
+
+.. automodule:: word_vectors
+    :members:
+    :undoc-members:
+    :show-inheritance:

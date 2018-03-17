@@ -1,0 +1,7 @@
+neural\_pooling module
+======================
+
+.. automodule:: neural_pooling
+    :members:
+    :undoc-members:
+    :show-inheritance:

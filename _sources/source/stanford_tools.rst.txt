@@ -1,0 +1,7 @@
+stanford\_tools module
+======================
+
+.. automodule:: stanford_tools
+    :members:
+    :undoc-members:
+    :show-inheritance:

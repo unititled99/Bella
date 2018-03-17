@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dependency_tokens module &mdash; Bella 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Bella 1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Bella
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">dependency_tokens module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bella</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>dependency_tokens module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/dependency_tokens.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-dependency_tokens">
+<span id="dependency-tokens-module"></span><h1>dependency_tokens module<a class="headerlink" href="#module-dependency_tokens" title="Permalink to this headline">¶</a></h1>
+<p>Contains the following class:</p>
+<ol class="arabic simple">
+<li>DependencyToken</li>
+</ol>
+<dl class="class">
+<dt id="dependency_tokens.DependencyToken">
+<em class="property">class </em><code class="descclassname">dependency_tokens.</code><code class="descname">DependencyToken</code><span class="sig-paren">(</span><em>token</em>, <em>relations</em>, <em>connected_words</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dependency_tokens.html#DependencyToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dependency_tokens.DependencyToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Objects that contain a token and its dependency relations via it’s attributes.</p>
+<p>Attributes:</p>
+<ol class="arabic simple">
+<li>self.token – The token stored e.g. <cite>hello</cite></li>
+<li>self.relations – The dict that contains words associated to the token     at different dependency relation levels e.g. relation of 1 direct dependency     of the token, relation 2 dependency relations of the relation 1 words.</li>
+<li>self.connected_words – A list of tuples (word, relation) where all words     are within the same dependency tree and are listed in the order they appear     in the text that was parsed. relation can take two values <cite>CURRENT</cite> current     token and <cite>CONNECTED</cite> any other token.</li>
+</ol>
+<p>Methods:</p>
+<ol class="arabic simple">
+<li>get_n_relations – The lower and upper bound of the range <cite>n</cite> for the     words retrived at different relation levels associated to the <cite>n</cite> range.</li>
+</ol>
+<dl class="method">
+<dt id="dependency_tokens.DependencyToken.connected_target_span">
+<code class="descname">connected_target_span</code><span class="sig-paren">(</span><em>renormalise=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dependency_tokens.html#DependencyToken.connected_target_span"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dependency_tokens.DependencyToken.connected_target_span" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>renormalise</strong> (<em>tuple. Default None</em>) – A tuple containing the normalised target and the         real target word e.g. (Samsung_S5, Samsung S5). If you do not require         this leave as default parameter None.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">It returns connected words as a String and the span of the current         token within that String as a tuple of length 2.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dependency_tokens.DependencyToken.get_n_relations">
+<code class="descname">get_n_relations</code><span class="sig-paren">(</span><em>relation_range=(1</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dependency_tokens.html#DependencyToken.get_n_relations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dependency_tokens.DependencyToken.get_n_relations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a tuple to denote the range of the depth of dependency relations to
+return. Returns a list of words.</p>
+<p>If the relation range is greater than the depth range then it will return
+all words up to the last depth and ignore the depths that do not exisit.</p>
+<p>Negative ranges can be used in a similar manner to how list indexs work.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relation_range</strong> (<em>tuple</em>) – Tuple to denote the range of the depth of         dependency relations to return.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of words that are associated to the token at the depth         range given.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rel_token</span> <span class="o">=</span> <span class="n">DependencyToken</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">],</span> <span class="mi">2</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;anything&#39;</span><span class="p">],</span>
+<span class="go">                                3 : [&#39;lastly&#39;]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">relations</span> <span class="o">=</span> <span class="n">rel_token</span><span class="o">.</span><span class="n">get_n_relations</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">relations</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;anything&#39;</span><span class="p">,</span> <span class="s1">&#39;lastly&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">relations</span> <span class="o">=</span> <span class="n">rel_token</span><span class="o">.</span><span class="n">get_n_relations</span><span class="p">((</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">relations</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;anything&#39;</span><span class="p">,</span> <span class="s1">&#39;lastly&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Unititled.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
