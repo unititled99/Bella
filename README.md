@@ -7,7 +7,7 @@ Target Dependent Sentiment Analysis (TDSA) framework.
 1. Only been tested on Ubuntu 14.04 and 16.04
 2. Python Tested with 3.6 and known to not work with anything less than 3.5.
 3. pip3 install -r requirements.txt
-4. To use the [Tweebo Parser](./tools/TweeboParser) requires *gcc* and *cmake*. Tweebo will also automatically install when you first import the dependency_parsers module. Therefore to install it before run the script [./tools/TweeboParser/install.sh](./tools/TweeboParser/install.sh). This will take at least 15 minutes and depends on your Internet connection. Also may require sudo access.
+4. To use the [Tweebo Parser](./tools/TweeboParser) requires *gcc* and *cmake*. Tweebo will also automatically install when you first import the dependency_parsers module **BUT** would recomend installing it before by running the script [./tools/TweeboParser/install.sh](./tools/TweeboParser/install.sh). This will take at least 15 minutes and depends on your Internet connection. **NOTE** permission to all files within ./tools/TweeboParser is very important I would recomend running: chmod -R 777 ./tools/TweeboParser
 5. Docker - This is required to run Stanford CoreNLP. To install docker (Note requires sudo therefore might be best to look at the script and choose the commands you want to use) on Ubuntu run [docker_install](./docker_install.sh) will remove old or new version of docker with the specified one in the script. It will also pull the Stanford CoreNLP container and run it in the background.
 
 ## Data and Word vectors and where to store them
